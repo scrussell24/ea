@@ -1,3 +1,3 @@
 # ea
 
-Trying to learn clokure by writing some Simple EA's
+Trying to learn clojure by writing some Simple EA's
