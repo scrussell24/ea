@@ -1,6 +1,5 @@
 (ns ea.core
   (require [ea.ga :as ga]))
-  ; (require [ea.gp :as gp]))
 
 ;; Simple GA
 (defn simple-ga []
@@ -20,24 +19,7 @@
         generations 
         mutate)))))
 
-;; Simple GP
-; (defn simple-gp []
-  ; (let [generations 100
-  ;       pop-size 100
-  ;       max-depth 5
-  ;       primitives '(+ -)
-  ;       terminals '(1)
-  ;       mutate-prob 0.25
-  ;       fitness #(eval %)]
-  ;   (println (first 
-  ;     (gp/evolve
-  ;       generations 
-  ;       pop-size
-  ;       max-depth
-  ;       primitives
-  ;       terminals
-  ;       mutate-prob
-  ;       fitness)))))
+;; Simple GP TODO
 
 (defn -main
   [& args]

@@ -1,4 +1,4 @@
-;; Simple Gentic Algorithm.
+;; Simple Genetic Algorithm.
 (ns ea.ga)
 
   (defn sptit-chrm [index chrm]
