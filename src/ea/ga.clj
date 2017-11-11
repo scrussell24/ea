@@ -27,16 +27,18 @@
   
   (defn sort-pop [pop fitness]
     (sort #(compare (fitness %2) (fitness %1)) pop))
-  
-  (defn rand-log [n] ;; Returns 0.25*log(x) + 1 for random x in [0, n)
-    (let [log (+ (* 0.25 (Math/log (rand n))) 1)]
-      (if (< log 0) 0.0001 log))) ;; don't want to return anything <= 0 :(
-  
-  (defn get-index [size]
-    (int (Math/floor (* (- 1 (rand-log 1)) size))))
+
+  (defn tournament-select
+    [times min size]
+    (let [index (rand-int size)]
+        (if (= times 0)
+          min
+          (if (< index min)
+            (tournament-select (- times 1) index size)
+            (tournament-select (- times 1) min size)))))
   
   (defn get-mate [pop]
-    (nth pop (get-index (count pop))))
+    (nth pop (tournament-select (count pop) (count pop) 5)))
   
   (defn mate-pop [pop fitness mut]
     (let [sorted-pop (sort-pop pop fitness)]
