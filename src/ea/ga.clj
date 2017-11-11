@@ -1,10 +1,10 @@
 ;; Simple Genetic Algorithm.
 (ns ea.ga)
 
-  (defn sptit-chrm [index chrm]
-    (split-at index chrm)) ;; this should change
+  (defn split-chrm [index chrm]
+    (split-at index chrm))
 
-  (defn concat-chrm [chrm1 chrm2] 
+  (defn concat-chrm [chrm1 chrm2]
     (concat chrm1 chrm2))
 
   (defn replace-gene [chrm index gene]
@@ -21,8 +21,8 @@
 
   (defn mate [chrm1 chrm2 mut]
     (let [break (rand-int (count chrm1))
-          bgn (first (sptit-chrm break chrm1)) 
-          end (last (sptit-chrm break chrm2))]
+          bgn (first (split-chrm break chrm1)) 
+          end (last (split-chrm break chrm2))]
       (mut (vec (concat-chrm bgn end)))))
   
   (defn sort-pop [pop fitness]

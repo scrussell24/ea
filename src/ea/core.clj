@@ -5,7 +5,7 @@
 ;; Simple GA
 (defn simple-ga []
   (let [generations 100
-        pop-size 1000
+        pop-size 100
         chrm-size 20
         mutate-prob 0.25
         rand-gene #(rand-int 1000)
@@ -20,10 +20,10 @@
         generations 
         mutate)))))
 
-;; Simple GP TODO
+;; Simple GP
 (defn simple-gp []
   (let [generations 100
-        pop-size 1000
+        pop-size 100
         chrm-size 20
         mutate-prob 0.25
         rand-gene #(rand-int 1000)
@@ -40,4 +40,5 @@
 
 (defn -main
   [& args]
+  (simple-ga)
   (simple-gp))
