@@ -1,16 +1,7 @@
 ;; Simple Genetic Algorithm.
 (ns ea.ga)
 
-  (defn split-chrm [index chrm]
-    (split-at index chrm))
-
-  (defn concat-chrm [chrm1 chrm2]
-    (concat chrm1 chrm2))
-
-  (defn replace-gene [chrm index gene]
-    (assoc chrm index gene))
-  
-  (defn mutate [rand-gene prob chrm]
+  (defn mutate [rand-gene prob chrm replace-gene]
     (let [mut-prob (rand)]
       (if (> mut-prob prob)
         (replace-gene chrm (rand-int (count chrm)) (rand-gene))
@@ -19,11 +10,11 @@
   (defn create-mutate [rand-gene prob]
     (partial mutate rand-gene prob))
 
-  (defn mate [chrm1 chrm2 mut]
+  (defn mate [chrm1 chrm2 chrm-fns]
     (let [break (rand-int (count chrm1))
-          bgn (first (split-chrm break chrm1)) 
-          end (last (split-chrm break chrm2))]
-      (mut (vec (concat-chrm bgn end)))))
+          bgn (first ((chrm-fns :split-chrm) break chrm1)) 
+          end (last ((chrm-fns :split-chrm) break chrm2))]
+      ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end)) (chrm-fns :replace-gene))))
   
   (defn sort-pop [pop fitness]
     (sort #(compare (fitness %2) (fitness %1)) pop))
@@ -40,15 +31,23 @@
   (defn get-mate [pop]
     (nth pop (tournament-select (count pop) (count pop) 5)))
   
-  (defn mate-pop [pop fitness mut]
+  (defn mate-pop [pop fitness chrm-fns]
     (let [sorted-pop (sort-pop pop fitness)]
-      (sort-pop (repeatedly (count pop) #(mate (get-mate pop) (get-mate pop) mut)) fitness)))
+      (sort-pop (repeatedly (count pop) #(mate (get-mate pop) (get-mate pop) chrm-fns)) fitness)))
+
+  (def default-chrm-fns 
+    {:split-chrm #(split-at %1 %2)
+     :concat-chrm #(concat %1 %2)
+     :replace-gene #(assoc %1 %2 %3)
+     :mutate (create-mutate #(rand-int 10) 0.25)})
   
-  (defn evolve [fitness pop gen mut]
-    (if (= gen 0)
-    pop
-    (evolve
-      fitness
-      (mate-pop pop fitness mut)
-      (- gen 1)
-      mut)))
+  (defn evolve 
+    [fitness pop gen chrm-fns]
+    (let [chrm-fns (merge default-chrm-fns chrm-fns)]
+      (if (= gen 0)
+        pop
+        (evolve
+          fitness
+          (mate-pop pop fitness chrm-fns)
+          (- gen 1)
+          chrm-fns))))
