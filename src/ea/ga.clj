@@ -1,20 +1,20 @@
 ;; Simple Genetic Algorithm.
 (ns ea.ga)
 
-  (defn mutate [rand-gene prob chrm replace-gene]
+  (defn mutate [rand-gene prob chrm chrm-fns]
     (let [mut-prob (rand)]
       (if (> mut-prob prob)
-        (replace-gene chrm (rand-int (count chrm)) (rand-gene))
+        ((chrm-fns :replace-gene) chrm (rand-int ((chrm-fns :count-chrm) chrm)) (rand-gene))
         chrm)))
   
   (defn create-mutate [rand-gene prob]
     (partial mutate rand-gene prob))
 
   (defn mate [chrm1 chrm2 chrm-fns]
-    (let [break (rand-int (count chrm1))
+    (let [break (rand-int ((chrm-fns :count-chrm) chrm1))
           bgn (first ((chrm-fns :split-chrm) break chrm1)) 
           end (last ((chrm-fns :split-chrm) break chrm2))]
-      ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end)) (chrm-fns :replace-gene))))
+      ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end)) chrm-fns)))
   
   (defn sort-pop [pop fitness]
     (sort #(compare (fitness %2) (fitness %1)) pop))
@@ -36,9 +36,10 @@
       (sort-pop (repeatedly (count pop) #(mate (get-mate pop) (get-mate pop) chrm-fns)) fitness)))
 
   (def default-chrm-fns 
-    {:split-chrm #(split-at %1 %2)
-     :concat-chrm #(concat %1 %2)
-     :replace-gene #(assoc %1 %2 %3)
+    {:count-chrm count
+     :split-chrm split-at
+     :concat-chrm concat
+     :replace-gene assoc
      :mutate (create-mutate #(rand-int 10) 0.25)})
   
   (defn evolve 
