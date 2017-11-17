@@ -1,6 +1,7 @@
 (ns ea.core
   (require [ea.ga :as ga])
-  (require [ea.gp :as gp]))
+  (require [ea.gp :as gp])
+  (require [ea.tree :as t]))
 
 ;; Simple GA
 (defn simple-ga []
@@ -21,8 +22,28 @@
         chrm-fns)))))
 
 ;; Simple GP
+; (defn simple-gp []
+;   (let [fitness #(reduce - %)
+;         generations 100
+;         pop-size 100
+;         max-depth 10
+;         mutate-prob 0.25
+;         functions '()
+;         terminals '()]
+;     (println (first 
+;       (gp/evolve
+;         fitness
+;         generations 
+;         pop-size
+;         max-depth
+;         mutate-prob
+;         functions
+;         terminals)))))
 
 
 (defn -main
   [& args]
-  (simple-ga))
+    (println (-> [1 2 4 [4 5]] 
+      (t/remove-nth-node 2)
+      (t/replace-nth-node 1 [6 7 8])
+      (t/count-tree))))
