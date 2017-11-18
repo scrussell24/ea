@@ -6,12 +6,6 @@
       (if (> mut-prob prob)
         ((chrm-fns :replace-gene) chrm (rand-int ((chrm-fns :count-chrm) chrm)) (rand-gene))
         chrm)))
-
-  (defn- mate [chrm1 chrm2 chrm-fns]
-    (let [break (rand-int ((chrm-fns :count-chrm) chrm1))
-          bgn (first ((chrm-fns :split-chrm) break chrm1)) 
-          end (last ((chrm-fns :split-chrm) break chrm2))]
-      ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end)) chrm-fns)))
   
   (defn- sort-pop [pop fitness]
     (sort #(compare (fitness %2) (fitness %1)) pop))
@@ -26,22 +20,35 @@
             (tournament-select (- times 1) min size)))))
   
   (defn- get-mate [pop]
-    (nth pop (tournament-select (count pop) (count pop) 5)))
+    (nth pop (tournament-select (count pop) (count pop) 2)))
   
   (defn- mate-pop [pop fitness chrm-fns]
-    (let [sorted-pop (sort-pop pop fitness)]
-      (sort-pop (repeatedly (count pop) #(mate (get-mate pop) (get-mate pop) chrm-fns)) fitness)))
+    (let [sorted-pop (sort-pop pop fitness)
+          random-child #((chrm-fns :mate) (get-mate pop) (get-mate pop) chrm-fns)
+          mated-pop (repeatedly (count pop) random-child)]
+      (sort-pop mated-pop fitness)))
 
   (defn create-mutate [rand-gene prob]
     (partial mutate rand-gene prob))
 
+  (defn- mate 
+    [chrm1 chrm2 chrm-fns]
+    (let [size ((chrm-fns :count-chrm) chrm1)
+          break (- size (rand-int (- size 1)))
+          bgn (first ((chrm-fns :split-chrm) break chrm1)) 
+          end (last ((chrm-fns :split-chrm) break chrm2))]
+      ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end break)) chrm-fns)))
+
+
   (def default-chrm-fns 
-    {:count-chrm count
-     :split-chrm split-at
-     :concat-chrm concat
-     :replace-gene assoc
-     :mutate (create-mutate #(rand-int 10) 0.25)})
-  
+    {:mate mate                                              ; chrm1 chrm2 chrm-fns -> chrm
+     :count-chrm count                                       ; fn float chrm -> chrm
+     :split-chrm split-at                                    ; chrm n -> chrm
+     :concat-chrm (fn [chrm1 chrm2 _] (concat chrm1 chrm2))  ; chrm n -> [chrm1 chrm2]
+     :replace-gene assoc                                     ; chrm1 chrm1 -> chrm
+     :mutate (create-mutate #(rand-int 10) 0.25)})           ; chrm n gene -> chrm
+
+  (use 'clojure.pprint)
   (defn evolve 
     [fitness pop gen chrm-fns]
     (let [chrm-fns (merge default-chrm-fns chrm-fns)]
