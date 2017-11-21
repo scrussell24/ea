@@ -28,9 +28,6 @@
           mated-pop (repeatedly (count pop) random-child)]
       (sort-pop mated-pop fitness)))
 
-  (defn create-mutate [rand-gene prob]
-    (partial mutate rand-gene prob))
-
   (defn- mate 
     [chrm1 chrm2 chrm-fns]
     (let [size ((chrm-fns :count-chrm) chrm1)
@@ -39,6 +36,8 @@
           end (last ((chrm-fns :split-chrm) break chrm2))]
       ((chrm-fns :mutate) (vec ((chrm-fns :concat-chrm) bgn end break)) chrm-fns)))
 
+    (defn create-mutate [rand-gene prob]
+      (partial mutate rand-gene prob))
 
   (def default-chrm-fns 
     {:mate mate                                              ; chrm1 chrm2 chrm-fns -> chrm
