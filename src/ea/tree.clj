@@ -23,6 +23,8 @@
         zipper
         (walk-to-nth (z/next zipper) (- n 1)))))
 
+(def tseq (partial tree-seq vector? identity))
+
 (defn replace-nth-node
   [root n node]
   (z/root (z/replace (walk-to-nth root n) node)))
@@ -35,6 +37,13 @@
   [root n]
   (z/root (z/remove (walk-to-nth root n))))
 
-(defn count-tree
-  [root]
-  (count (flatten root)))
+(defn count-tree [root]
+  (count (tseq root)))
+
+;; got this from stackoverflow would like to look into more
+(defn max-depth [tree]
+  (loop [curr (z/zipper coll? seq nil tree) h 0]
+    (if (z/end? curr) h
+      (recur (z/next curr)
+        (if (z/branch? curr) h
+          (-> curr z/path count (max h)))))))

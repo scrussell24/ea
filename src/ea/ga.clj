@@ -47,7 +47,6 @@
      :replace-gene assoc                                     ; chrm1 chrm1 -> chrm
      :mutate (create-mutate #(rand-int 10) 0.25)})           ; chrm n gene -> chrm
 
-  (use 'clojure.pprint)
   (defn evolve 
     [fitness pop gen chrm-fns]
     (let [chrm-fns (merge default-chrm-fns chrm-fns)]
