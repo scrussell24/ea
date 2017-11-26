@@ -2,7 +2,6 @@
 (ns ea.gp
   (require [ea.treega :as tga]))
 
-
 (defn rand-gene [] 
   (identity [(rand-int 10) (rand-int 10)]))
         
@@ -14,10 +13,10 @@
                    (rand-chrm rand-gene (- max-depth 1) false)]))))
 
 (defn evolve
-  [max-depth
-   fitness
+  [fitness
    generations
    pop-size
+   max-depth
    mutate-prob
    functions
    terminals]

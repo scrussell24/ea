@@ -56,7 +56,7 @@
       rand-chrm)))
 
 ;; Simple GP
-(defn fitness [max-depth chrm]
+(defn sum-tree [max-depth chrm]
   (let [fit (reduce + (flatten chrm))]
     (if (> (t/max-depth chrm) max-depth)
       0
@@ -64,13 +64,13 @@
 
 (defn simple-gp []
   (let [max-depth 3
-        fitness (partial fitness max-depth)
+        fitness (partial sum-tree max-depth)
         generations 100
         pop-size 100
         mutate-prob 0.25
         functions []
         terminals []]
-    (tga/evolve
+    (gp/evolve
       fitness
       generations 
       pop-size
@@ -81,6 +81,6 @@
 
 (defn -main
   [& args]
-  (println (first (simple-ga)))
-  (println (first (simple-tree-ga)))
+  ;(println (first (simple-ga)))
+  ;(println (first (simple-tree-ga)))
   (println (first (simple-gp))))
