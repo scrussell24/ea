@@ -47,3 +47,10 @@
       (recur (z/next curr)
         (if (z/branch? curr) h
           (-> curr z/path count (max h)))))))
+
+;; Our trees are ususally vectors but they need to 
+;; be converted to lists in order to eval
+(defn to-list [root]
+  (if (vector? root)
+    (reverse (into (list) (map to-list root)))
+    root))
