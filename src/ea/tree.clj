@@ -40,13 +40,12 @@
 (defn count-tree [root]
   (count (tseq root)))
 
-;; got this from stackoverflow would like to look into more
-(defn max-depth [tree]
-  (loop [curr (z/zipper coll? seq nil tree) h 0]
-    (if (z/end? curr) h
-      (recur (z/next curr)
-        (if (z/branch? curr) h
-          (-> curr z/path count (max h)))))))
+(defn max-depth [root]
+  (loop [current (z/zipper coll? seq nil root) height 0]
+    (if (z/end? current) height
+      (recur (z/next current)
+        (if (z/branch? current) height
+          (-> current z/path count (max height)))))))
 
 ;; Our trees are ususally vectors but they need to 
 ;; be converted to lists in order to eval
