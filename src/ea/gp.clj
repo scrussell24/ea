@@ -1,16 +1,16 @@
 ;; Simple Genetic Programming.
 (ns ea.gp
-  (require [ea.treega :as tga]))
+  (require [ea.treega :as tga])
+  (require [ea.tree :as t]))
 
-(defn rand-gene [] 
-  (identity [(rand-int 10) (rand-int 10)]))
-        
-(defn rand-chrm [rand-gene max-depth initial]
-  (let [gene-type (rand-int max-depth)]
-    (if (and (= gene-type 0) (not initial))
-        (rand-gene)
-        (identity [(rand-chrm rand-gene (- max-depth 1) false)
-                   (rand-chrm rand-gene (- max-depth 1) false)]))))
+(defn rand-gene [functions terminals max-depth initial] 
+  (if (or initial (> max-depth 0))
+    (identity [(rand-nth functions)
+               (rand-gene functions terminals (- max-depth 1) false)
+               (rand-gene functions terminals (- max-depth 1) false)])
+    ((rand-nth terminals))))
+
+(defn rand-chrm [rg max-depth initial] (rg))
 
 (defn evolve
   [fitness
@@ -26,5 +26,5 @@
       pop-size
       max-depth
       mutate-prob
-      rand-gene
+      (partial rand-gene functions terminals max-depth true)
       rand-chrm))
